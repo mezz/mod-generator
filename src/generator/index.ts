@@ -12,6 +12,7 @@ export interface Settings {
   chmodGradlewStep: boolean;
   mixins: boolean;
   disableComments: boolean;
+  minimal: boolean;
 }
 
 /**
@@ -113,6 +114,7 @@ function generateInterpolated(
     chmod_gradlew_step: settings.chmodGradlewStep,
     mixins: settings.mixins,
     disableComments: settings.disableComments,
+    minimal: settings.minimal,
   };
   const partials: Record<string, any> = {
     mdg_block_gradle,
@@ -142,17 +144,21 @@ function generateInterpolated(
     `src/main/${settings.useNeoGradle ? "resources" : "templates"}/META-INF/${view.mods_toml_file}`
   ] = encodeUtf8(interpolateTemplate(neoforge_mods_toml, view));
 
-  ret[`src/main/resources/assets/${settings.modId}/lang/en_us.json`] =
-    encodeUtf8(interpolateTemplate(en_us_json, view));
+  if (!settings.minimal) {
+    ret[`src/main/resources/assets/${settings.modId}/lang/en_us.json`] =
+      encodeUtf8(interpolateTemplate(en_us_json, view));
+  }
 
   const javaFolder = `src/main/java/${settings.packageName.replace(/\./g, "/")}`;
-  ret[`${javaFolder}/Config.java`] = encodeUtf8(
-    interpolateTemplate(Config_java, view),
-  );
+  if (!settings.minimal) {
+    ret[`${javaFolder}/Config.java`] = encodeUtf8(
+      interpolateTemplate(Config_java, view),
+    );
+  }
   ret[`${javaFolder}/${modClassName}.java`] = encodeUtf8(
     interpolateTemplate(ModClass_java, view),
   );
-  if (view.from_1_21_1) {
+  if (!settings.minimal && view.from_1_21_1) {
     ret[`${javaFolder}/${modClassName}Client.java`] = encodeUtf8(
       interpolateTemplate(ModClassClient_java, view),
     );

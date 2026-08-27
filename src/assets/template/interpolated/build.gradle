@@ -33,9 +33,9 @@ sourceSets.main.resources {
     {{ ^disableComments }}
     // Exclude common development only resources from finalized outputs
     {{ /disableComments }}
-    exclude("**/*.bbmodel"){{ ^disableComments }} // BlockBench project files
-    {{ /disableComments }}
-
+    {{ ^minimal }}
+    exclude("**/*.bbmodel"){{ ^disableComments }} // BlockBench project files{{ /disableComments }}
+    {{ /minimal }}
     exclude("src/generated/**/.cache"){{ ^disableComments }} // datagen cache files{{ /disableComments }}
 }
 
@@ -177,8 +177,7 @@ publishing {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' {{ ^disableComments }}// Use the UTF-8 charset for Java compilation
-    {{ /disableComments }}
+    options.encoding = 'UTF-8' {{ ^disableComments }}// Use the UTF-8 charset for Java compilation{{ /disableComments }}
 }
 
 {{ ^disableComments }}
